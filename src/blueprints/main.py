@@ -1,13 +1,21 @@
 from flask import Blueprint, request, jsonify, current_app, render_template, send_file
 import os
 from datetime import datetime
+import pytz
 
 main_bp = Blueprint("main", __name__)
 
 @main_bp.route('/')
 def main_page():
     device_config = current_app.config['DEVICE_CONFIG']
-    return render_template('inky.html', config=device_config.get_config(), plugins=device_config.get_plugins())
+    # Get current time based on your InkyPi settings
+    tz_str = device_config.get_config("timezone", default="UTC")
+    now = datetime.now(pytz.timezone(tz_str))
+    
+    # Format: THU JAN 15 2026 (Clear Japanese-style uppercase)
+    formatted_time = now.strftime("%a %b %d %Y").upper()
+    
+    return render_template('inky.html',config=device_config.get_config(),plugins=device_config.get_plugins(),current_time_date=formatted_time) # Passing the time variable
 
 @main_bp.route('/api/current_image')
 def get_current_image():
