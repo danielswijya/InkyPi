@@ -2,7 +2,10 @@ from flask import Blueprint, request, jsonify, current_app, render_template, sen
 import os
 from datetime import datetime
 import pytz
+from utils.weather_utils import get_weather_data_for_dashboard
+import logging
 
+logger = logging.getLogger(__name__)
 main_bp = Blueprint("main", __name__)
 
 @main_bp.route('/')
@@ -15,7 +18,14 @@ def main_page():
     # Format: THU JAN 15 2026 (Clear Japanese-style uppercase)
     formatted_time = now.strftime("%a %b %d %Y").upper()
     
-    return render_template('inky.html',config=device_config.get_config(),plugins=device_config.get_plugins(),current_time_date=formatted_time) # Passing the time variable
+    # Fetch weather data for the dashboard
+    weather_data = get_weather_data_for_dashboard(device_config)
+    
+    return render_template('inky.html',
+                         config=device_config.get_config(),
+                         plugins=device_config.get_plugins(),
+                         current_time_date=formatted_time,
+                         weather=weather_data)
 
 @main_bp.route('/api/current_image')
 def get_current_image():

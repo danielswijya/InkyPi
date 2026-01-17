@@ -13,8 +13,48 @@
 
         <div class="main-layout">
             <aside class="column col-left">
-                <div class="box weather-box">Weather [250x220]</div>
-                <div class="box todo-box">To Do Today [250x275]</div>
+                <div class="box weather-box">
+                    {% if weather %}
+                        <div class="weather-content">
+                            <div class="weather-icon">
+                                <img src="{{ weather.icon_url }}" alt="{{ weather.condition }}">
+                            </div>
+                            <div class="weather-temp">{{ weather.temp }}°{{ weather.units == 'imperial' and 'F' or 'C' }}</div>
+                            <div class="weather-condition">{{ weather.condition }}</div>
+                            <div class="weather-details">
+                                <span>Feels like {{ weather.feels_like }}°</span>
+                                <span>Humidity {{ weather.humidity }}%</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="weather-placeholder">Weather Unavailable</div>
+                    {% endif %}
+                </div>
+                <div class="box todo-box">
+                    <div class="todo-header">To-Do List</div>
+                    <div class="todo-list">
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                    </div>
+                </div>
             </aside>
 
             <section class="column col-mid">
