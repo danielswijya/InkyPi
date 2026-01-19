@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/bento_grid.css') }}">
+    <script src="{{ url_for('static', filename='scripts/bento_grid.js') }}" defer></script>
 </head>
 <body>
     <div class="dashboard-boundary">
@@ -58,9 +59,36 @@
             </aside>
 
             <section class="column col-mid">
-                <div class="box bible-box">Bible Quote [275x250]</div>
-                <div class="box sports-box">Sports [275x125]</div>
-                <div class="box calendar-box"> Calendar [275x125]</div>
+                <div class="box calendar-box">Calendar [275x125]</div>
+                <div class="box sports-box">
+                    <div class="competition-header" id="competition-name">No Match</div>
+                    <div id="sports-content">
+                        <div class="match-container">
+                            <div class="team home-team">
+                                <img src="" alt="Home Team" class="team-logo" id="home-logo">
+                                <div class="team-name" id="home-name">-</div>
+                            </div>
+                            <div class="match-info">
+                                <div class="score" id="match-score">-</div>
+                                <div class="status" id="match-status">-</div>
+                            </div>
+                            <div class="team away-team">
+                                <img src="" alt="Away Team" class="team-logo" id="away-logo">
+                                <div class="team-name" id="away-name">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box bible-box">
+                    {% if bible %}
+                        <div class="bible-content">
+                            <p class="verse-text">"{{ bible.text }}"</p>
+                            <p class="verse-reference">— {{ bible.reference }} ({{ bible.version }})</p>
+                        </div>
+                    {% else %}
+                        <div class="bible-placeholder">Bible Quote Unavailable</div>
+                    {% endif %}
+                </div>
             </section>
 
             <section class="column col-right">

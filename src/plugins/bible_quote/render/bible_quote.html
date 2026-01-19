@@ -1,0 +1,17 @@
+{% extends "plugin.html" %}
+
+{% block content %}
+<div class="bible-quote-container">
+    <div class="verse-text">"{{ verse_text }}"</div>
+    
+    <div class="verse-info">
+        {% if show_reference %}
+            <span class="verse-reference">— {{ verse_reference }}</span>
+        {% endif %}
+        
+        {% if show_version %}
+            <span class="verse-version">({{ verse_version }})</span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

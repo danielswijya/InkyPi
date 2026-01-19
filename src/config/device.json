@@ -3,5 +3,25 @@
     "orientation": "horizontal",
     "inverted_image": false,
     "scheduler_sleep_time": 60,
-    "startup": true
+    "startup": true,
+    "plugins": [
+        {
+            "id": "weather",
+            "class": "Weather",
+            "settings": {
+                "latitude": 42.3611,
+                "longitude": -71.058,
+                "units": "metric",
+                "weatherProvider": "OpenWeatherMap"
+            }
+        },
+        {
+            "id": "bible_quote",
+            "class": "BibleQuote",
+            "settings": {
+                "showReference": "true",
+                "showVersion": "true"
+            }
+        }
+    ]
 }

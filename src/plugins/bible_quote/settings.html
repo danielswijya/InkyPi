@@ -1,0 +1,50 @@
+<div class="form-group">
+    <label for="version" class="form-label">Bible Version:</label>
+    <select id="version" name="version" class="form-input">
+        <option value="1">King James Version (KJV)</option>
+        <option value="111">New International Version (NIV)</option>
+        <option value="59">English Standard Version (ESV)</option>
+        <option value="116">New Living Translation (NLT)</option>
+        <option value="114">New King James Version (NKJV)</option>
+    </select>
+    <small>Requires YouVersion API token in .env file. Falls back to free API if not available.</small>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Display Options:</label>
+    
+    <div class="form-group">
+        <input type="checkbox" id="showReference" name="showReference" value="true" checked onclick="this.value=this.checked ? 'true' : 'false';">
+        <span>Show Reference (e.g., John 3:16)</span>
+    </div>
+    
+    <div class="form-group">
+        <input type="checkbox" id="showVersion" name="showVersion" value="true" checked onclick="this.value=this.checked ? 'true' : 'false';">
+        <span>Show Bible Version (e.g., NIV)</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Default values
+        let version = "1"; // KJV
+        let showReference = true;
+        let showVersion = true;
+
+        // Load from plugin settings if editing existing instance
+        if (loadPluginSettings) {
+            version = pluginSettings.version || "1";
+            showReference = pluginSettings.showReference !== 'false';
+            showVersion = pluginSettings.showVersion !== 'false';
+        }
+
+        // Populate form
+        document.getElementById('version').value = version;
+        
+        document.getElementById('showReference').checked = showReference;
+        document.getElementById('showReference').value = showReference ? 'true' : 'false';
+        
+        document.getElementById('showVersion').checked = showVersion;
+        document.getElementById('showVersion').value = showVersion ? 'true' : 'false';
+    });
+</script>

@@ -1,0 +1,31 @@
+.bible-quote-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.verse-text {
+    font-size: 2em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.verse-info {
+    display: flex;
+    gap: 10px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.verse-reference {
+    opacity: 0.8;
+}
+
+.verse-version {
+    opacity: 0.6;
+}
