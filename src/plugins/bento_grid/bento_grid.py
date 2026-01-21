@@ -12,8 +12,8 @@ class BentoGrid(BasePlugin):
         if device_config.get_config("orientation") == "vertical":
             dimensions = dimensions[::-1]
         
-        # Screenshot the main dashboard page
-        url = "http://localhost:8080/"
+        # Screenshot the bento dashboard page
+        url = "http://localhost:8080/bento"
         logger.info(f"Taking screenshot of bento dashboard: {url}")
         
         image = take_screenshot(url, dimensions, timeout_ms=10000)

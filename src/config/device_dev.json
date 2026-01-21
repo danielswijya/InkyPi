@@ -7,12 +7,50 @@
     ],
     "orientation": "horizontal",
     "playlist_config": {
-        "playlists": [],
+        "playlists": [
+            {
+                "name": "Default",
+                "start_time": "00:00",
+                "end_time": "24:00",
+                "plugins": [
+                    {
+                        "plugin_id": "image_upload",
+                        "name": "image1",
+                        "plugin_settings": {
+                            "padImage": "false",
+                            "backgroundOption": "blur",
+                            "backgroundColor": "#ffffff",
+                            "imageFiles[]": [
+                                "/home/danielsw/Desktop/bento_dashboard_inkypi/InkyPi/src/static/images/saved/1768963705199.jpg"
+                            ]
+                        },
+                        "refresh": {
+                            "interval": 120
+                        },
+                        "latest_refresh_time": "2026-01-21T02:50:59.318652+00:00"
+                    },
+                    {
+                        "plugin_id": "newspaper",
+                        "name": "news1",
+                        "plugin_settings": {
+                            "newspaperName": "The Boston Globe",
+                            "newspaperSlug": "ma_bg",
+                            "locationSearch": "Boston, USA"
+                        },
+                        "refresh": {
+                            "interval": 240
+                        },
+                        "latest_refresh_time": null
+                    }
+                ],
+                "current_plugin_index": null
+            }
+        ],
         "active_playlist": null
     },
     "refresh_info": {
-        "refresh_time": "2026-01-16T00:25:25.493411+00:00",
-        "image_hash": "ab3f9eeb9cfa6fd2912d0eba7603bc80f358822dfe9d947e2161eb0fb30f8c55",
+        "refresh_time": "2026-01-21T03:55:35.689244+00:00",
+        "image_hash": "350048d6f33a2b111c022dd7c70334ed35eb80be50d2a8e29adb8b9ad4311a1f",
         "refresh_type": "Manual Update",
         "plugin_id": "newspaper"
     }

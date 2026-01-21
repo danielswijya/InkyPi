@@ -2,103 +2,95 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bento_grid.css') }}">
-    <script src="{{ url_for('static', filename='scripts/bento_grid.js') }}" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config.name }}</title>
+    <script>
+        (function() {
+            const theme = localStorage.getItem('inkypi-theme') || 
+                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+        let lastModified = null;
+        const refreshIntervalMs = 3 * 1000;
+
+        async function refreshImage() {
+            const img = document.querySelector('.image-container img');
+            if (!img) return;
+
+            try {
+                const headers = {};
+                if (lastModified) {
+                    headers['If-Modified-Since'] = lastModified;
+                }
+
+                const response = await fetch('{{ url_for("main.get_current_image") }}', { headers });
+                
+                if (response.status === 304) {
+                    // Image hasn't changed, no need to update
+                    return;
+                }
+
+                if (!response.ok) {
+                    console.error('Failed to fetch image:', response.status);
+                    return;
+                }
+
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                
+                // Update the image source
+                img.src = objectUrl;
+                
+                // Store the Last-Modified header for next request
+                lastModified = response.headers.get('Last-Modified');
+            } catch (error) {
+                console.error('Error refreshing image:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh image immediately on page load
+            refreshImage();
+            
+            // Set up auto-refresh based on plugin cycle interval
+            setInterval(refreshImage, refreshIntervalMs);
+        });
+    </script>
 </head>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
+<script src="{{ url_for('static', filename='scripts/image_modal.js') }}"></script>
 <body>
-    <div class="dashboard-boundary">
-        
-        <header class="top-header">
-            {{ current_time_date }}
+    <script src="{{ url_for('static', filename='scripts/dark_mode.js') }}"></script>
+    <!-- Subtle frame container -->
+    <div class="frame">
+        <!-- Page Title -->
+        <header class="header">
+            <h1>{{ config.name }}</h1>
+            <button class="settings-button dark-mode-toggle" title="Toggle Dark Mode" aria-label="Toggle Dark Mode"></button>
+            <a href="{{ url_for('playlist.playlists') }}" class="settings-button">
+                <img src="{{ url_for('static', filename='icons/playlist.png') }}" title="Playlists" alt="playlists icon" class="icon-image">
+            </a>
+            <a href="{{ url_for('settings.settings_page') }}" class="settings-button">
+                <img src="{{ url_for('static', filename='icons/settings.png') }}" title="Settings" alt="settings icon" class="icon-image">
+            </a>
         </header>
 
-        <div class="main-layout">
-            <aside class="column col-left">
-                <div class="box weather-box">
-                    {% if weather %}
-                        <div class="weather-content">
-                            <div class="weather-icon">
-                                <img src="{{ weather.icon_url }}" alt="{{ weather.condition }}">
-                            </div>
-                            <div class="weather-temp">{{ weather.temp }}°{{ weather.units == 'imperial' and 'F' or 'C' }}</div>
-                            <div class="weather-condition">{{ weather.condition }}</div>
-                            <div class="weather-details">
-                                <span>Feels like {{ weather.feels_like }}°</span>
-                                <span>Humidity {{ weather.humidity }}%</span>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="weather-placeholder">Weather Unavailable</div>
-                    {% endif %}
-                </div>
-                <div class="box todo-box">
-                    <div class="todo-header">To-Do List</div>
-                    <div class="todo-list">
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <div class="todo-line"></div>
-                        </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <div class="todo-line"></div>
-                        </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <div class="todo-line"></div>
-                        </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <div class="todo-line"></div>
-                        </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <div class="todo-line"></div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+        <!-- Display the current image -->
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='images/current_image.png') }}" alt="Current Image">
+        </div>
 
-            <section class="column col-mid">
-                <div class="box calendar-box">Calendar [275x125]</div>
-                <div class="box sports-box">
-                    <div class="competition-header" id="competition-name">No Match</div>
-                    <div id="sports-content">
-                        <div class="match-container">
-                            <div class="team home-team">
-                                <img src="" alt="Home Team" class="team-logo" id="home-logo">
-                                <div class="team-name" id="home-name">-</div>
-                            </div>
-                            <div class="match-info">
-                                <div class="score" id="match-score">-</div>
-                                <div class="status" id="match-status">-</div>
-                            </div>
-                            <div class="team away-team">
-                                <img src="" alt="Away Team" class="team-logo" id="away-logo">
-                                <div class="team-name" id="away-name">-</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="box bible-box">
-                    {% if bible %}
-                        <div class="bible-content">
-                            <p class="verse-text">"{{ bible.text }}"</p>
-                            <p class="verse-reference">— {{ bible.reference }} ({{ bible.version }})</p>
-                        </div>
-                    {% else %}
-                        <div class="bible-placeholder">Bible Quote Unavailable</div>
-                    {% endif %}
-                </div>
-            </section>
-
-            <section class="column col-right">
-                <div class="box mbta-box"> MBTA [425x130]</div>
-                <div class="challenges-grid">
-                    <div class="challenge-cell">Challenges</div>
-                    <div class="challenge-cell">Challenges</div>
-                </div>
-                <div class="box news-box">News Grid [425x220]</div>
-            </section>
+        <!-- Separator -->
+        <div class="separator"></div>
+        <h2 class="plugins-title">Plugins</h2>
+        <div class="button-grid">
+            {% for plugin in plugins %}
+            <a href="{{ url_for('plugin.plugin_page', plugin_id=plugin.id) }}" class="icon-button" title="{{ plugin.display_name }}" >
+                <img src="{{ url_for('plugin.image', plugin_id=plugin.id, filename='icon.png') }}" alt="{{ plugin.display_name }} icon" class="icon-image">
+            </a>
+            {% endfor %}
         </div>
     </div>
 </body>

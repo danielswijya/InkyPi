@@ -136,6 +136,87 @@ def get_bible_from_plugin(device_config):
         logger.error(f"Error fetching Bible verse from plugin: {e}")
         return None
 
+def get_newspaper_data(device_config):
+    """Get newspaper data using the newspaper plugin."""
+    try:
+        # First check main plugins list
+        plugins = device_config.get_plugins()
+        newspaper_settings = None
+        
+        for plugin in plugins:
+            if plugin.get('id') == 'newspaper' and not plugin.get('disabled', False):
+                newspaper_settings = plugin.get('settings', {})
+                break
+        
+        # If not found, check in playlists
+        if not newspaper_settings:
+            playlist_config = device_config.get_config('playlist_config', {})
+            playlists = playlist_config.get('playlists', [])
+            
+            for playlist in playlists:
+                for plugin in playlist.get('plugins', []):
+                    if plugin.get('plugin_id') == 'newspaper':
+                        newspaper_settings = plugin.get('plugin_settings', {})
+                        break
+                if newspaper_settings:
+                    break
+        
+        if not newspaper_settings:
+            logger.info("Newspaper plugin not configured")
+            return None
+        
+        # Check if newspaper is configured with required settings
+        if not newspaper_settings.get('newspaperSlug'):
+            logger.info("Newspaper plugin not configured - missing newspaper selection")
+            return None
+        
+        # Return newspaper info for display
+        return {
+            'configured': True,
+            'newspaper': newspaper_settings.get('newspaperName', 'Newspaper')
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching newspaper from plugin: {e}")
+        return None
+
+def get_random_image_from_uploads():
+    """Get a random image from uploaded images folder."""
+    try:
+        import random
+        from pathlib import Path
+        
+        # Path where image_upload saves files (via handle_request_files)
+        upload_dir = Path(__file__).parent.parent / 'static' / 'images' / 'saved'
+        
+        if not upload_dir.exists():
+            logger.info("Upload directory doesn't exist yet")
+            return None
+        
+        # Get all image files
+        image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif']
+        image_files = [f for f in upload_dir.iterdir() 
+                      if f.is_file() and f.suffix.lower() in image_extensions]
+        
+        if not image_files:
+            logger.info("No images found in uploads folder")
+            return None
+        
+        # Pick a random image
+        random_image = random.choice(image_files)
+        
+        # Return URL path for serving via Flask static
+        relative_path = f"/static/images/saved/{random_image.name}"
+        
+        return {
+            'url': relative_path,
+            'filename': random_image.name
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting random image: {e}")
+        return None
+
 @main_bp.route('/')
 def main_page():
     device_config = current_app.config['DEVICE_CONFIG']
@@ -162,6 +243,36 @@ def main_page():
                          weather=weather_data,
                          bible=bible_data)
                          # sports=sports_data  # Add when ready
+
+@main_bp.route('/bento')
+def bento_dashboard():
+    """Bento grid dashboard for e-ink display screenshot."""
+    device_config = current_app.config['DEVICE_CONFIG']
+    # Get current time based on your InkyPi settings
+    tz_str = device_config.get_config("timezone", default="UTC")
+    now = datetime.now(pytz.timezone(tz_str))
+    
+    # Format: THU JAN 15 2026 (Clear Japanese-style uppercase)
+    formatted_time = now.strftime("%a %b %d %Y").upper()
+    
+    # Fetch weather data from the weather plugin
+    weather_data = get_weather_from_plugin(device_config)
+    
+    # Fetch Bible verse from the bible_quote plugin
+    bible_data = get_bible_from_plugin(device_config)
+    
+    # Get random uploaded image for slideshow
+    slideshow_image = get_random_image_from_uploads()
+    
+    # Fetch newspaper data
+    news_data = get_newspaper_data(device_config)
+    
+    return render_template('bento_dashboard.html',
+                         current_time_date=formatted_time,
+                         weather=weather_data,
+                         bible=bible_data,
+                         slideshow_image=slideshow_image,
+                         news=news_data)
 
 @main_bp.route('/api/current_image')
 def get_current_image():

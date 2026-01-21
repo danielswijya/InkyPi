@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bento_grid.css') }}">
+    <script src="{{ url_for('static', filename='scripts/bento_grid.js') }}" defer></script>
+</head>
+<body>
+    <div class="dashboard-boundary">
+        
+        <header class="top-header">
+            {{ current_time_date }}
+        </header>
+
+        <div class="main-layout">
+            <aside class="column col-left">
+                <div class="box weather-box">
+                    {% if weather %}
+                        <div class="weather-content">
+                            <div class="weather-icon">
+                                <img src="{{ weather.icon_url }}" alt="{{ weather.condition }}">
+                            </div>
+                            <div class="weather-temp">{{ weather.temp }}°{{ weather.units == 'imperial' and 'F' or 'C' }}</div>
+                            <div class="weather-condition">{{ weather.condition }}</div>
+                            <div class="weather-details">
+                                <span>Feels like {{ weather.feels_like }}°</span>
+                                <span>Humidity {{ weather.humidity }}%</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="weather-placeholder">Weather Unavailable</div>
+                    {% endif %}
+                </div>
+                <div class="box todo-box">
+                    <div class="todo-header">To-Do List</div>
+                    <div class="todo-list">
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <div class="todo-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="column col-mid">
+                <div class="box image-upload-box">
+                    {% if slideshow_image %}
+                        <img src="{{ slideshow_image.url }}" alt="Slideshow Image">
+                    {% else %}
+                        <div class="image-placeholder">No Images Uploaded</div>
+                    {% endif %}
+                </div>
+                <div class="box sports-box">
+                    <div class="competition-header" id="competition-name">No Match</div>
+                    <div id="sports-content">
+                        <div class="match-container">
+                            <div class="team home-team">
+                                <img src="" alt="Home Team" class="team-logo" id="home-logo">
+                                <div class="team-name" id="home-name">-</div>
+                            </div>
+                            <div class="match-info">
+                                <div class="score" id="match-score">-</div>
+                                <div class="status" id="match-status">-</div>
+                            </div>
+                            <div class="team away-team">
+                                <img src="" alt="Away Team" class="team-logo" id="away-logo">
+                                <div class="team-name" id="away-name">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box bible-box">
+                    {% if bible %}
+                        <div class="bible-content">
+                            <p class="verse-text">"{{ bible.text }}"</p>
+                            <p class="verse-reference">— {{ bible.reference }} ({{ bible.version }})</p>
+                        </div>
+                    {% else %}
+                        <div class="bible-placeholder">Bible Quote Unavailable</div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="column col-right">
+                <div class="box mbta-box">
+                    {% if mbta %}
+                        {{ mbta | safe }}
+                    {% else %}
+                        <p>MBTA data unavailable</p>
+                    {% endif %}
+                </div>
+
+                <div class="box challenges-grid">
+                    <div class="challenge-cell">75 Hard</div>
+                    <div class="challenge-cell">Advent of Code</div>
+                </div>
+
+                <div class="box news-box">
+                    {% if news and news.configured %}
+                        <div class="news-header">{{ news.newspaper }}</div>
+                        <p style="text-align: center; color: #666; padding: 20px;">
+                            Newspaper configured. Full content will appear when rendered to display.
+                        </p>
+                    {% else %}
+                        <p style="text-align: center; color: #999; font-style: italic;">
+                            Configure newspaper plugin at Settings
+                        </p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

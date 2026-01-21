@@ -1,0 +1,6 @@
+{
+  "id": "bento_grid",
+  "display_name": "Bento Grid Dashboard",
+  "class": "BentoGrid",
+  "description": "Multi-widget dashboard layout with weather, todos, images, sports, and more"
+}
